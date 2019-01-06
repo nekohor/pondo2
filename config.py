@@ -8,7 +8,7 @@ class Config(object):
     def __init__(self):
         self.dict = {}
         self.conf = configparser.ConfigParser()
-        self.conf.read("config_work.ini", encoding="utf-8-sig")
+        self.conf.read("config_home.ini", encoding="utf-8-sig")
         self.dump_setting()
 
     def dump_setting(self):
@@ -18,6 +18,8 @@ class Config(object):
 
         self.dict["tables_dir"] = self.conf.get("path", "tables_dir")
         self.dict["root_dir"] = self.get_root_dir()
+
+        self.dict["export_dir"] = self.conf.get("path", "export_dir")
         self.dict["result_dir"] = self.conf.get("path", "result_dir")
 
         self.dict["date_array"] = self.get_date_array()

@@ -2,10 +2,12 @@
 
 class Length():
 
-    def __init__(self, line, rule, coil_len):
-        self.line = line
+    def __init__(self, ctx, rule, id_record):
+        self.line = ctx.line
         self.rule = rule
-        self.build_hdtl(coil_len)
+
+        coil_id = id_record["coil_id"]
+        self.build_hdtl(ctx.cid.table.loc[coil_id, "coil_len"])
         self.build_cut()
 
     def build_cut(self):

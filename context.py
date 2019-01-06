@@ -1,6 +1,7 @@
 import pandas as pd
 from config import Config
 import sys
+import os
 
 from part_table import PartTable
 from task_table import TaskTable
@@ -28,6 +29,14 @@ class Context:
 
     def get_cur_dir_by_now(self):
         return sys.argv[2].replace("\\", "/")
+
+    def get_coil_id_list(self, cur_dir):
+        path_list = os.listdir(cur_dir)
+        return [x for x in path_list if os.path.isdir(cur_dir + "/" + x)]
+
+    def get_exported_data_dir(self, date):
+        return "{}/{}/{}".format(
+            self.cfg["export_dir"], date[:6])
 
     def get_dca_path(self, cur_dir, coil_id, signals):
         part = signals[0]

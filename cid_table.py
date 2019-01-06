@@ -1,22 +1,12 @@
-import os
+
 import pandas as pd
 
 
 class CoilIdTable:
-    def __init__(self, db, cur_dir):
+    def __init__(self, db, coil_id_list):
         self.db = db
-        self.cur_dir = cur_dir
-
-        self.coil_id_list = self.get_coil_id_list()
+        self.coil_id_list = [self.add_quote(x) for x in coil_id_list]
         self.table = self.read_cid_table()
-
-    def get_coil_id_list(self):
-        path_list = os.listdir(self.cur_dir)
-        dirs = [x for x in path_list if os.path.isdir(self.cur_dir + "/" + x)]
-
-        coil_id_list = [self.add_quote(x) for x in dirs]
-
-        return coil_id_list
 
     def add_quote(self, id):
         return "'" + id + "'"

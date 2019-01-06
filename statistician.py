@@ -28,9 +28,7 @@ class Statistician():
 
                 executor.set_stat_fn(rule["STAT_FN"])
                 executor.set_segment(rule["SEGMENT"])
-                executor.set_length(
-                    Length(ctx.line, rule,
-                           ctx.cid.table.loc[coil_id, "coil_len"]))
+                executor.set_length(Length(ctx, rule, id_record))
                 executor.set_upper_lower(Tolerance(rule, id_record))
 
                 col_name = ctx.tasks.col_list[task_id]
@@ -41,3 +39,15 @@ class Statistician():
             # i += 1
             # if i > 0:
             #     break
+
+    def secondary_stat(self, ctx, data_json, df):
+        for coil_id in ctx.cid.table.index:
+            id_record = ctx.cid.table.loc[coil_id]
+            for task_id in ctx.tasks.table.index:
+                rule = ctx.tasks.table.loc[task_id]
+
+                calc_result = data_json.calc(rule, id_record)
+                col_name = ctx.tasks.col_list[task_id]
+
+                df.loc[coil_id, col_name] = calc_result
+                print(id_record["start_date"], coil_id, col_name, calc_result)
