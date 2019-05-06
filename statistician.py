@@ -6,6 +6,7 @@ from client import SocketClient
 from records import Records
 from coils import Coils
 from calculator import Calculator
+from criteria import Criteria
 import logging
 
 
@@ -44,7 +45,11 @@ class Statistician():
         for date_dir in self.ctx.direct.get_date_dirs():
             self.socket_stat(df, cur_dir=date_dir)
         df = self.ctx.db.merge_cid(df)
+
         self.ctx.direct.save_batch_stat(df)
+
+        # if self.ctx.task.is_access_db():
+        #     Criteria(self.ctx, df).run()
 
     def specific_stat(self, coil_ids):
         df = pd.DataFrame()

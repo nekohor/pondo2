@@ -54,6 +54,7 @@ class DB():
         # try:
         cid = self.read_cid_table(df["coil_id"])
         df = pd.merge(cid, df, how="left", on="coil_id")
+        df.index = df["coil_id"]
         return df
         # except Exception as e:
         #     return df
