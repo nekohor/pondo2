@@ -3,9 +3,11 @@ import numpy as np
 
 class Tolerance():
 
-    def __init__(self, rule, id_record):
-        self.rule = rule
-        self.id_record = id_record
+    def __init__(self, ctx, coil_id, rule):
+        self.ctx = ctx
+        self.coil_id = coil_id
+        self.rule = rule.rule
+        self.record = self.ctx.records.get_record(coil_id)
         self.build_tolerance()
 
     def build_tolerance(self):
@@ -22,10 +24,14 @@ class Tolerance():
         self.upper = aim + tol
 
     def get_aim(self):
+
+        if self.rule["STAT_FN"] != "aimrate":
+            return 0
+
         if str(self.rule["AIM"])[0] == "0":
             return 0
         else:
-            return self.id_record["aim_{}".format(self.rule["AIM"])]
+            return self.record["aim_{}".format(self.rule["AIM"])]
 
     def get_tol(self):
         if self.rule["TOL"] == 0:
@@ -35,7 +41,7 @@ class Tolerance():
 
     def get_tol_by_thk(self):
         tol = (self.rule["TOL_PERC"] / 100 *
-               self.id_record["aim_thick"])
+               self.record["aim_thick"])
         return np.minimum(tol, self.rule["TOL_MAX"])
 
     def get_upper(self):

@@ -5,28 +5,31 @@ from datetime import datetime, timedelta
 
 class Config(object):
 
-    def __init__(self):
+    def __init__(self, ctx):
+        self.ctx = ctx
         self.dict = {}
         self.conf = configparser.ConfigParser()
-        self.conf.read("config_home.ini", encoding="utf-8-sig")
+        self.conf.read("config.ini", encoding="utf-8-sig")
         self.dump_setting()
 
     def dump_setting(self):
+        self.dict["max_array"] = self.conf.getint("data", "max_array")
+
         self.dict["batch_mode"] = self.conf.getboolean("mode", "batch_mode")
 
         self.dict["line"] = self.conf.get("path", "line")
 
-        self.dict["tables_dir"] = self.conf.get("path", "tables_dir")
         self.dict["root_dir"] = self.get_root_dir()
 
         self.dict["export_dir"] = self.conf.get("path", "export_dir")
         self.dict["result_dir"] = self.conf.get("path", "result_dir")
 
-        self.dict["date_array"] = self.get_date_array()
-
-        self.dict["max_array"] = self.conf.getint("data", "max_array")
+        self.dict["date_array"] = self.get_dates()
 
         self.dict["task_name"] = self.conf.get("task", "task_name")
+
+    def get_line(self):
+        return self.dict["line"]
 
     def get_root_dir(self):
         if self.dict["line"] == "1580":
@@ -36,7 +39,7 @@ class Config(object):
         else:
             raise Exception("wrong mill line")
 
-    def get_date_array(self):
+    def get_dates(self):
         start_date = self.conf.get("date", "start_date")
         end_date = self.conf.get("date", "end_date")
 
@@ -45,14 +48,19 @@ class Config(object):
 
         days = (end_datetime - start_datetime).days
 
-        date_array = []
+        dates = []
         for i in range(days + 1):
             current_datetime = start_datetime + timedelta(days=i)
-            date_array.append(current_datetime.strftime("%Y%m%d"))
-        print(date_array)
-        return date_array
+            dates.append(current_datetime.strftime("%Y%m%d"))
+        return dates
 
-    def get_config_dict(self):
+    def get_task_name(self):
+        return self.dict["task_name"]
+
+    def get_result_dir(self):
+        return self.dict["result_dir"]
+
+    def get_dict(self):
         return self.dict
 
 

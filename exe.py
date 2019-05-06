@@ -4,7 +4,7 @@ import numpy as np
 
 class Exe():
     def __init__(self):
-        self.raw_cmd = "C:/Windows/pondex.exe"
+        self.raw_cmd = "pondex.exe"
 
     def set_signals(self, signals):
         self.signals = signals

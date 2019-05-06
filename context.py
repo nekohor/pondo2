@@ -1,54 +1,65 @@
 import pandas as pd
-from config import Config
+
 import sys
 import os
 
-from part_table import PartTable
-from task_table import TaskTable
-from cid_table import CoilIdTable
+from config import Config
+from parts import Parts
+from task import Task
 from db import DB
+from directory import Directory
+# from records import Records
+
+import json
+import logging
 
 
 class Context:
 
     def __init__(self):
 
-        self.cfg = Config().get_config_dict()
-        self.line = self.cfg["line"]
-        self.partbl = PartTable(self.line, self.cfg["tables_dir"])
-        self.tasks = TaskTable(self.line, self.cfg["task_name"])
-        self.db = DB(self.line)
-        self.cid = "CoilIdTable()"
+        self.cfg = Config(self)
+        self.line = self.cfg.get_line()
+        self.root_dir = self.cfg.get_root_dir()
 
-    def get_cur_dir_by_date(self, date):
-        return "{}/{}/{}".format(
-            self.cfg["root_dir"],
-            date[:6],
-            date
-        )
+        self.partbl = Parts(self)
+        self.task = Task(self)
+
+        self.db = DB(self)
+        self.direct = Directory(self)
 
     def get_cur_dir_by_now(self):
         return sys.argv[2].replace("\\", "/")
 
-    def get_coil_id_list(self, cur_dir):
-        path_list = os.listdir(cur_dir)
-        return [x for x in path_list if os.path.isdir(cur_dir + "/" + x)]
+    def get_batch_result_path(self):
+        result_path = self.cfg.get_result_dir()
+        result_path += "/{}_{}_{}_{}.xlsx".format(
+            self.line,
+            self.cfg.get_task_name(),
+            self.cfg.get_dates()[0],
+            self.cfg.get_dates()[-1]
+        )
+        return result_path
 
+    # about exported data
     def get_exported_data_dir(self, date):
         return "{}/{}/{}".format(
             self.cfg["export_dir"], date[:6])
 
-    def get_dca_path(self, cur_dir, coil_id, signals):
-        part = signals[0]
-        return "{}/{}/{}".format(
-            cur_dir, coil_id, self.partbl.get_dca_file_name(part))
-
-    def get_daily_result_path(self):
-        result_path = self.cfg["result_dir"] + "/"
-        result_path += "{}_{}_{}_{}.xlsx".format(
-            self.line,
-            self.cfg["task_name"],
-            self.cfg["date_array"][0],
-            self.cfg["date_array"][-1]
+    def get_exported_data_json_path(self, date):
+        return "{}/{}/{}/{}".format(
+            self.ctx.cfg["export_dir"],
+            self.ctx.line,
+            date[:6],
+            "ExportedData_{}_{}.json".format(
+                self.ctx.line,
+                date
+            )
         )
-        return result_path
+
+    def get_exported_data_json(self, date):
+        logging.info(self.get_exported_data_json_path(date))
+        coils = {}
+        with open(self.get_exported_data_json_path(date), "r") as json_file:
+            coils = json.load(json_file)
+        return coils
