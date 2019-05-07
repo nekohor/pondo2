@@ -103,3 +103,4 @@ class Criteria():
         return q
 
     def rate(self):
+        pass

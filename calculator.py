@@ -82,7 +82,7 @@ class Calculator():
             result = np.mean(np.abs(array))
         else:
             raise Exception("wrong stat func input")
-        return round(result, 2)
+        return round(result, 4)
 
     def calc_aimrate(self, array):
         tol = Tolerance(self.ctx, self.coil_id, self.rule)
