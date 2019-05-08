@@ -7,8 +7,8 @@ class HeadTail():
         self.coil_id = coil_id
         self.rule = rule
 
-        self.build_len()
         self.build_cut()
+        self.build_len()
 
     def build_cut(self):
         self.head_cut = 5
