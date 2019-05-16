@@ -57,8 +57,11 @@ class Config(object):
     def get_task_name(self):
         return self.dict["task_name"]
 
-    def get_result_dir(self):
+    def get_stat_result_dir(self):
         return self.dict["result_dir"]
+
+    def get_crit_result_dir(self):
+        return "e:/crit_result_data"
 
     def get_dict(self):
         return self.dict

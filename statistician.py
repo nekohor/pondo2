@@ -11,8 +11,8 @@ import logging
 
 
 class Statistician():
-    def __init__(self):
-        self.ctx = Context()
+    def __init__(self, ctx):
+        self.ctx = ctx
 
     def socket_stat(self, df, ids=None, cur_dir=None):
 

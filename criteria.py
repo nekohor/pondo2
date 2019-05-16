@@ -1,28 +1,38 @@
 import pandas as pd
 import numpy as np
 import rollen
-
+import logging
 from rollen.query import DataFrameQueryBuilder
 
 
 class Criteria():
 
     def __init__(self, ctx, df_stat):
+
         self.ctx = ctx
+
         self.df_stat = df_stat
         self.df_stat.index = self.df_stat["coil_id"]
 
         self.table = pd.read_excel(
             "criterias/criteria_{}.xlsx".format(self.ctx.cfg.get_task_name()))
 
+        self.cut_table = self.table[
+            ["final_col_name", "rate_bins", "rate_levels"]
+        ].drop_duplicates()
+
         self.df_crit = pd.DataFrame(index=self.df_stat.index)
 
         primary_cols = ["coil_id", "steel_grade",
                         "aim_thick", "aim_width", "start_date"]
-
         self.df_crit[primary_cols] = self.df_stat[primary_cols]
 
         self.rln = rollen.tool()
+
+    def evaluate(self):
+        self.select_columns()
+        self.rate()
+        self.ctx.direct.save_crit_result(self.df_crit)
 
     def select_columns(self):
 
@@ -51,11 +61,8 @@ class Criteria():
                     if np.isnan(cond[val]):
                         pass
                     else:
-                        print(cond[oper])
-                        print(type(cond[oper]))
-
-                        print(cond[val])
-                        print(type(cond[val]))
+                        print(cond[oper], type(cond[oper]))
+                        print(cond[val], type(cond[val]))
 
                         q = q.where(
                             div_col, cond[oper], cond[val])
@@ -74,33 +81,23 @@ class Criteria():
                 df[cond["selected_col_name"]]
             )
 
-        # self.df_crit.to_excel("df_crit.xlsx")
-
-    def select_div(self, cond):
-
-        q = DataFrameQueryBuilder().table(self.df_stat)
-
-        divs = ["wid", "thk"]
-        lims = ["min", "max"]
-
-        for div in divs:
-            for lim in lims:
-                print("now")
-
-                val = "{}_{}_val".format(div, lim)
-                oper = "{}_{}_oper".format(div, lim)
-                div_col = "aim_{}".format(div)
-
-                if np.isnan(cond[val]):
-                    pass
-                else:
-                    print(cond[oper])
-                    print(cond[val])
-
-                    q = q.where(
-                        div_col, cond[oper], cond[div])
-
-        return q
-
     def rate(self):
-        pass
+
+        for idx in self.cut_table.index:
+
+            cond = self.cut_table.loc[idx]
+
+            logging.info(cond["rate_bins"].split(","))
+            logging.info(cond["rate_levels"].split(","))
+            rate_bins = [int(x) for x in cond["rate_bins"].split(",")]
+            rate_levels = cond["rate_levels"].split(",")
+
+            data_col = cond["final_col_name"]
+            rate_col = (cond["final_col_name"] + "level").upper()
+
+            self.df_crit[rate_col] = pd.cut(
+                self.df_crit[data_col],
+                bins=rate_bins,
+                labels=rate_levels,
+                include_lowest=True,
+            ).apply(lambda x: str(x))

@@ -31,16 +31,6 @@ class Context:
     def get_cur_dir_by_now(self):
         return sys.argv[2].replace("\\", "/")
 
-    def get_batch_result_path(self):
-        result_path = self.cfg.get_result_dir()
-        result_path += "/{}_{}_{}_{}.xlsx".format(
-            self.line,
-            self.cfg.get_task_name(),
-            self.cfg.get_dates()[0],
-            self.cfg.get_dates()[-1]
-        )
-        return result_path
-
     # about exported data
     def get_exported_data_dir(self, date):
         return "{}/{}/{}".format(

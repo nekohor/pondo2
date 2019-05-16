@@ -36,8 +36,18 @@ class Directory:
         return [(cur_dir + "/" + x) for x in coil_ids]
 
     def get_batch_stat_result_path(self):
-        result_path = self.ctx.cfg.get_result_dir()
-        result_path += "/{}_{}_{}_{}.xlsx".format(
+        result_path = self.ctx.cfg.get_stat_result_dir()
+        result_path += "/stat_{}_{}_{}_{}.xlsx".format(
+            self.ctx.line,
+            self.ctx.cfg.get_task_name(),
+            self.ctx.cfg.get_dates()[0],
+            self.ctx.cfg.get_dates()[-1]
+        )
+        return result_path
+
+    def get_crit_result_path(self):
+        result_path = self.ctx.cfg.get_crit_result_dir()
+        result_path += "/crti_{}_{}_{}_{}.xlsx".format(
             self.ctx.line,
             self.ctx.cfg.get_task_name(),
             self.ctx.cfg.get_dates()[0],
@@ -48,4 +58,9 @@ class Directory:
     def save_batch_stat(self, df):
 
         save_path = self.get_batch_stat_result_path()
+        df.to_excel(save_path)
+
+    def save_crit_result(self, df):
+
+        save_path = self.get_crit_result_path()
         df.to_excel(save_path)

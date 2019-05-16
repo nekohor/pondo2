@@ -11,8 +11,12 @@ class HeadTail():
         self.build_len()
 
     def build_cut(self):
-        self.head_cut = 5
-        self.tail_cut = 5
+        if self.rule.get_factor() == "r2dt":
+            self.head_cut = 5
+            self.tail_cut = 18
+        else:
+            self.head_cut = 5
+            self.tail_cut = 5
 
     def build_len(self):
         getattr(
