@@ -40,8 +40,8 @@ class DB():
             df.loc[idx, "cur_dir"] = "/".join(
                 [self.ctx.root_dir,
                  "{}".format(product_month),
-                 "{}".format(product_date),
-                 coil_id]
+                 "{}".format(product_date)]
+                # coil_id]
             )
 
     def to_month(self, ts):

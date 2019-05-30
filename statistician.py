@@ -20,7 +20,7 @@ class Statistician():
 
             coil_ids = self.ctx.direct.get_coil_ids(cur_dir)
             logging.info(coil_ids)
-        elif ids:
+        else:
             coil_ids = ids
 
         self.ctx.records = Records(self.ctx, coil_ids, cur_dir)
@@ -38,7 +38,9 @@ class Statistician():
 
                 col_name = self.ctx.task.get_col_name(task_idx)
                 df.loc[coil_id, col_name] = result
-                print(cur_dir, coil_id, col_name, result)
+                print(
+                    self.ctx.records.get_cur_dir(coil_id),
+                    coil_id, col_name, result)
 
     def batch_stat(self):
         df = pd.DataFrame()
@@ -53,6 +55,6 @@ class Statistician():
 
     def specific_stat(self, coil_ids):
         df = pd.DataFrame()
-        for date_dir in self.ctx.direct.get_date_dirs():
-            self.socket_stat(df, ids=coil_ids)
-        self.ctx.direct.save_specific_stat(df)
+        self.socket_stat(df, ids=coil_ids)
+        df = self.ctx.db.merge_cid(df)
+        self.ctx.direct.save_specific_stat(df, coil_ids)

@@ -11,18 +11,20 @@ class Records:
 
     def set_table(self):
 
-        if self.ctx.task.is_access_db():
+        print(self.ctx.task.is_access_db())
+        print(self.cur_dir)
+
+        if self.ctx.task.is_access_db() or (self.cur_dir is None):
             df = self.ctx.db.read_cid_table(self.coil_ids)
         else:
             df = pd.DataFrame()
             df["coil_id"] = self.coil_ids
-
-        if self.cur_dir:
             df["cur_dir"] = self.cur_dir
 
         df.index = df["coil_id"]
 
         df = self.select_hot_run(df)
+        print(df)
 
         return df
 

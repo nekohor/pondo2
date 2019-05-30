@@ -16,7 +16,10 @@ if __name__ == '__main__':
 
     ctx = Context()
 
-    Statistician(ctx).batch_stat()
+    # Statistician(ctx).batch_stat()
+
+    df = pd.read_excel("d:/work/专题/硅钢同板差/all_tag.xlsx")
+    Statistician(ctx).specific_stat(df["coil_id"])
 
     # df = pd.read_excel(ctx.direct.get_batch_stat_result_path())
     # Criteria(ctx, df).evaluate()
