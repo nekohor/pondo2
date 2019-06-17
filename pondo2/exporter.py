@@ -38,7 +38,8 @@ class Exporter():
                 )
 
             if cur_dir:
-
+                self.ctx.direct.save_current_export(
+                    df, factor_name, cur_dir)
             else:
                 self.ctx.direct.save_specific_export(
                     df, factor_name, coil_ids)

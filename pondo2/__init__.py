@@ -11,4 +11,4 @@ import logging
 
 def current_export(cur_dir):
     ctx = Context()
-    Exporter(ctx)
+    Exporter(ctx).current_export()
